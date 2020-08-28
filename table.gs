@@ -3,13 +3,19 @@
  * @param {string} sheetName: Name of the sheet to create a Table from
  * @param {number} headerRow: Row number where the header is.
  * @param {String} indexField: Field name you want to create an index with (commonly for ID field for fast lookup).
+ * @param {String} sheetId: Get spreadsheet by SheetId.
  * @returns {Table}
  */
-function getTable(sheetName, headerRow, indexField) {
+function getTable(sheetName, headerRow, indexField, sheetId) {
   if (!headerRow) {
     headerRow = 1;
   }
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  var sheet
+  if (sheetId) {
+    sheet = SpreadsheetApp.openById(sheetId).getSheetByName(sheetName);
+  } else {
+    sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  }
   var numberOfRows = sheet.getLastRow() - headerRow + 1;
   var tableRange = sheet.getRange(headerRow, 1, numberOfRows, sheet.getLastColumn());
   return new Table(tableRange, indexField);
